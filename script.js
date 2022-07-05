@@ -82,6 +82,13 @@ const displayMovements = function (movements) {
 
 displayMovements(account1.movements);
 
+const calcPrintBalance = function(movements) {
+  const balance = movements.reduce((acc, mov) => acc + mov, 0);
+  labelBalance.textContent = `${balance}€`;
+  return balance
+}
+console.log(calcPrintBalance(account1.movements));
+
 const createUserNames = function (accs) {
   accs.forEach(function (acc) {
     acc.username = acc.owner
@@ -92,9 +99,10 @@ const createUserNames = function (accs) {
   })
 }
 
-console.log(accounts);
+// console.log(accounts);
 
 createUserNames(accounts);
+
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
@@ -151,6 +159,3 @@ const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 // // console.log(dogsJulia.slice(1,3));
 
 // checkDogs(J, K);
-const withdrawals = movements.filter(function(x) {
-  return x < 0;
-})

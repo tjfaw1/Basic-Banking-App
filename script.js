@@ -72,7 +72,7 @@ const displayMovements = function (movements) {
     const html = `
       <div class="movements__row">
         <div class="movements__type movements__type--${type}">${i + 1} ${type}</div>
-        <div class="movements__value">${mov}</div>
+        <div class="movements__value">${mov}€</div>
       </div>
     `;
     // adding the html onto the webpage
@@ -88,6 +88,27 @@ const calcPrintBalance = function(movements) {
   return balance
 }
 // console.log(calcPrintBalance(account1.movements));
+
+const calcDisplaySummary = function(movements) {
+// get positive values
+  const incomes = movements.filter(mov => mov > 0).reduce((acc, mov) => acc + mov, 0);
+  labelSumIn.textContent = `${incomes}€`;
+  console.log(incomes);
+// get negative values (math.abs gets absolute value)
+  const out = movements.filter(mov => mov < 0).reduce((acc,cur) => acc + cur, 0);
+  console.log(out);
+  labelSumOut.textContent = `${Math.abs(out)}€`;
+
+  // 1.2% interest whenever theirs a deposit
+  const interest = movements.filter(mov => mov > 0).map(mov => (mov * 1.2) / 100).reduce((acc, cur) => acc + cur, 0);
+  labelSumInterest.textContent = `${interest}€`
+  console.log(interest);
+
+
+}
+
+calcDisplaySummary(account1.movements);
+
 
 const createUserNames = function (accs) {
   accs.forEach(function (acc) {
@@ -162,25 +183,27 @@ const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 
 
 // Coding Challenge #2
+
 // const calcAverageHumanAge = function (ages) {
-//   const humanAge = ages.map(function(age) {
-//     age <= 2 ? 2 * age : 16 + age * 4;
-//     console.log(humanAge);
-//     // return humanAge;
-//   })
+//   const humanAges = ages.map(age => age <= 2 ? 2 * age : 16 + age * 4);
+//   const adultDogs = humanAges.filter(age => age >= 18);
+
+//   console.log(ages);
+//   console.log(humanAges);
+//   console.log(adultDogs);
+
+//   const average = adultDogs.reduce((acc, cur) => acc + cur, 0) / adultDogs.length;
+
+//   console.log(average);
 // }
 
 
+// calcAverageHumanAge([5, 2, 4, 1, 15, 8, 3]);
 
+// CODING CHALLENGE 3
+// Re-Write the calcAverageHumanAge function but as an arrow function using strings
 
-const calcAverageHumanAge = function (ages) {
-  const humanAges = ages.map(age => age <= 2 ? 2 * age : 16 + age * 4);
-  const adultDogs = humanAges.filter(x => x > 18);
-
-  console.log(ages);
-  console.log(humanAges);
-  console.log(adultDogs);
-}
-
-
-calcAverageHumanAge([5, 2, 4, 1, 15, 8, 3]);
+// const calcAverageHumanAge2 = ages => ages
+// .map(age => age <= 2 ? 2 * age : 16 + age * 4)
+// .filter(age => age >= 18)
+// .reduce((acc, age, i, arr) => acc + age / arr.length, 0);

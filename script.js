@@ -87,7 +87,7 @@ const calcPrintBalance = function(movements) {
   labelBalance.textContent = `${balance}€`;
   return balance
 }
-console.log(calcPrintBalance(account1.movements));
+// console.log(calcPrintBalance(account1.movements));
 
 const createUserNames = function (accs) {
   accs.forEach(function (acc) {
@@ -159,3 +159,28 @@ const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 // // console.log(dogsJulia.slice(1,3));
 
 // checkDogs(J, K);
+
+
+// Coding Challenge #2
+// const calcAverageHumanAge = function (ages) {
+//   const humanAge = ages.map(function(age) {
+//     age <= 2 ? 2 * age : 16 + age * 4;
+//     console.log(humanAge);
+//     // return humanAge;
+//   })
+// }
+
+
+
+
+const calcAverageHumanAge = function (ages) {
+  const humanAges = ages.map(age => age <= 2 ? 2 * age : 16 + age * 4);
+  const adultDogs = humanAges.filter(x => x > 18);
+
+  console.log(ages);
+  console.log(humanAges);
+  console.log(adultDogs);
+}
+
+
+calcAverageHumanAge([5, 2, 4, 1, 15, 8, 3]);

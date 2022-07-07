@@ -80,34 +80,34 @@ const displayMovements = function (movements) {
   })
 }
 
-displayMovements(account1.movements);
+// displayMovements(account1.movements);
 
-const calcPrintBalance = function(movements) {
-  const balance = movements.reduce((acc, mov) => acc + mov, 0);
-  labelBalance.textContent = `${balance}€`;
-  return balance
+const calcPrintBalance = function(acc) {
+  acc.balance = acc.movements.reduce((acc, mov) => acc + mov, 0);
+  labelBalance.textContent = `${acc.balance}€`;
+  return acc.balance
 }
 // console.log(calcPrintBalance(account1.movements));
 
-const calcDisplaySummary = function(movements) {
+const calcDisplaySummary = function(acc) {
 // get positive values
-  const incomes = movements.filter(mov => mov > 0).reduce((acc, mov) => acc + mov, 0);
+  const incomes = acc.movements.filter(mov => mov > 0).reduce((acc, mov) => acc + mov, 0);
   labelSumIn.textContent = `${incomes}€`;
   console.log(incomes);
 // get negative values (math.abs gets absolute value)
-  const out = movements.filter(mov => mov < 0).reduce((acc,cur) => acc + cur, 0);
+  const out = acc.movements.filter(mov => mov < 0).reduce((acc,cur) => acc + cur, 0);
   console.log(out);
   labelSumOut.textContent = `${Math.abs(out)}€`;
 
   // 1.2% interest whenever theirs a deposit
-  const interest = movements.filter(mov => mov > 0).map(mov => (mov * 1.2) / 100).reduce((acc, cur) => acc + cur, 0);
+  const interest = acc.movements.filter(mov => mov > 0).map(mov => (mov * acc.interestRate) / 100).reduce((acc, cur) => acc + cur, 0);
   labelSumInterest.textContent = `${interest}€`
   console.log(interest);
 
 
 }
 
-calcDisplaySummary(account1.movements);
+// calcDisplaySummary(account1.movements);
 
 
 const createUserNames = function (accs) {
@@ -123,6 +123,97 @@ const createUserNames = function (accs) {
 // console.log(accounts);
 
 createUserNames(accounts);
+
+const updateUI = function (acc) {
+  displayMovements(acc.movements);
+  calcPrintBalance(acc);
+  calcDisplaySummary(acc);
+}
+
+// EVENT HANDLERS
+
+let currentAccount;
+
+btnLogin.addEventListener('click', function (e) {
+  // prevent form from submitting
+  e.preventDefault();
+  currentAccount = accounts.find(
+    acc => acc.username === inputLoginUsername.value
+    );
+  console.log(currentAccount);
+  // check if pin is correct
+  if(currentAccount?.pin === Number(inputLoginPin.value)) {
+    // display UI and Welcome Message
+    labelWelcome.textContent = `Welcome back, ${currentAccount.owner.split(' ')[0]}`;
+    containerApp.style.opacity = 100;
+
+    // Clear Input Fields & focus
+    inputLoginUsername.value = inputLoginPin.value = '';
+    inputLoginPin.blur();
+
+    // // Display Movements
+    // displayMovements(currentAccount.movements);
+
+    // // Display Balance
+    // calcPrintBalance(currentAccount);
+
+    // // Display Summary
+    // calcDisplaySummary(currentAccount);
+
+    // reformat as a function to be called and used elsewhere
+    updateUI(currentAccount);
+    // console.log('Login');
+  }
+})
+
+
+btnTransfer.addEventListener('click', function(e) {
+  e.preventDefault();
+  const amount = Number(inputTransferAmount.value);
+  const receiverAcc = accounts.find(
+    acc => acc.username === inputTransferTo.value
+  );
+  inputTransferAmount.value = inputTransferTo.value = '';
+  if(
+    amount > 0 &&
+    receiverAcc &&
+    currentAccount.balance >= amount &&
+    receiverAcc?.username !== currentAccount.username)
+    {
+    currentAccount.movements.push(-amount);
+    receiverAcc.movements.push(+amount);
+    updateUI(currentAccount);
+  }
+})
+
+btnLoan.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  const amount = Number(inputLoanAmount.value);
+
+  if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
+  //  add movement
+    currentAccount.movements.push(amount);
+    // Update UI
+    updateUI(currentAccount);
+  }
+})
+
+btnClose.addEventListener('click', function (e) {
+  e.preventDefault();
+  // console.log('Delete');
+  if (inputCloseUsername.value === currentAccount.username && Number(inputClosePin.value) === currentAccount.pin) {
+    const index = accounts.findIndex(
+      acc => acc.username === currentAccount.username);
+      console.log(index);
+      // delete account
+      accounts.splice(index, 1);
+      // Hide UI
+      containerApp.style.opacity = 0;
+    }
+  inputCloseUsername.value = inputCloseUsername.value = '';
+})
+
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////

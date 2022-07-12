@@ -62,12 +62,14 @@ const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
 
-const displayMovements = function (movements) {
+const displayMovements = function (movements, sort = false) {
   // Clear the html (including tags, classes etc) - this removes existing values
   containerMovements.innerHTML = "";
 
+  const movs = sort ? movements.slice().sort((a,b) => a - b) : movements
+
   // For each loop on movement argument array. Similar to rubycode using template literal
-  movements.forEach(function(mov, i) {
+  movs.forEach(function(mov, i) {
     const type = mov > 0 ? 'deposit' : 'withdrawal';
     const html = `
       <div class="movements__row">
@@ -173,7 +175,7 @@ btnTransfer.addEventListener('click', function(e) {
   const receiverAcc = accounts.find(
     acc => acc.username === inputTransferTo.value
   );
-  inputTransferAmount.value = inputTransferTo.value = '';
+
   if(
     amount > 0 &&
     receiverAcc &&
@@ -212,6 +214,13 @@ btnClose.addEventListener('click', function (e) {
       containerApp.style.opacity = 0;
     }
   inputCloseUsername.value = inputCloseUsername.value = '';
+})
+
+let sorted = false;
+btnSort.addEventListener('click', function(e) {
+  e.preventDefault();
+  displayMovements(currentAccount.movements, !sorted);
+  sorted = !sorted;
 })
 
 
@@ -298,3 +307,48 @@ const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 // .map(age => age <= 2 ? 2 * age : 16 + age * 4)
 // .filter(age => age >= 18)
 // .reduce((acc, age, i, arr) => acc + age / arr.length, 0);
+
+// HOW MANY DEPOSITS IN THE BANK WITH AT LEAST $1,000
+
+// const numDeposits1000 = accounts
+//   .flatMap(acc => acc.movements)
+//   .filter(move => mov >= 1000).length;
+//   // with reduce
+//   .reduce((count, cur) => (cur => 1000 ? count + 1 : count), 0);
+
+
+//   // Create an object that contains the sum of the deposits and withdrawals
+// const sums = accounts.flatMap(acc => acc.movements).reduce((sums, cur) => {
+// cur > 0 ? sums.deposits += cur : sums.withdrawals += cur;
+// return sums;
+// }, {deposits: 0, withdrawals: 0});
+
+// Challenge 4
+const dogs = [
+{ weight: 22, curFood: 250, owners: ['Alice', 'Bob'] },
+{ weight: 8, curFood: 200, owners: ['Matilda'] },
+{ weight: 13, curFood: 275, owners: ['Sarah', 'John'] },
+{ weight: 32, curFood: 340, owners: ['Michael'] },
+];
+// console.log(dogs);
+
+
+dogs.forEach(dog => dog.recommendedFood = Math.trunc(dog.weight ** .75 * 28));
+console.log(dogs);
+const dogSarah = dogs.find(dogs => dogs.owners.includes('Sarah'));
+console.log(`Sarah's Dog is Eating ${dogSarah.curFood > dogSarah.recommendedFood ? 'Too Much Food' : 'Too Little Food'}`);
+
+const ownersEatTooMuch = dogs.filter(dog => dog.curFood >= dog.recommendedFood).flatMap(dog => dog.owners);
+const ownersEatTooLittle = dogs.filter(dog => dog.curFood <= dog.recommendedFood).flatMap(dog => dog.owners);
+console.log(ownersEatTooMuch, ownersEatTooLittle);
+
+console.log(`${ownersEatTooMuch.join(' and ')}'s dogs eat too much!`);
+console.log(`${ownersEatTooLittle.join(' and ')}'s dogs eat too little!`);
+
+console.log(dogs.some(dog => dog.recommendedFood === dog.curFood));
+console.log(dogs.some(dog => dog.curFood > (dog.recommendedFood * 0.9) && dog.curFood < (dog.recommendedFood * 1.1)));
+const dogsWithGoodDiet = dogs.filter(dog => dog.curFood > (dog.recommendedFood * 0.9) && dog.curFood < (dog.recommendedFood * 1.1)).flatMap(dog => dog.owners);
+console.log(dogsWithGoodDiet);
+
+const dogsSorted = dogs.slice().sort((a, b) => a.recommendedFood - b.curFood);
+console.log(dogsSorted);
